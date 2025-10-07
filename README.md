@@ -1,58 +1,34 @@
 # Coding Challenge - Mobile Development
 
-## The Recipes Managed App
+## 🍲 The Recipes Managed App
 
-### Instructions
-Use the DummyJSON recipes API to get a list of recipes.  
-
-API: https://dummyjson.com/docs/recipes
+Aplicación móvil construida con [Expo](https://expo.dev/) para gestionar recetas.
 
 ---
 
-## Requirements
+### Requisitos Previos
 
-**Language / Framework**:  
-Build the app using Expo
+Antes de comenzar, asegúrate de tener instalado:
 
-**The app should include:**
-
-- A view to display:
-  - All recipes (at least show title, image, difficulty)
-  - Navigate to one recipe details
-  - Ability to remove one recipe
-  - Search functionality
-  - Filter functionality by difficulty prop (All, Easy, Medium)
-- Clear navigation system between all views
-- Functionality to favorite recipes and view them in a favorites section
-- Visually appealing use of fonts, colors, and layout
+- [Node.js](https://nodejs.org/) (recomendado: versión LTS)
+- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
+- [Expo CLI](https://docs.expo.dev/get-started/installation/) (instalación local usando `npx` o global con `npm install -g expo-cli`)
+- Un emulador Android/iOS o la app [Expo Go](https://expo.dev/client) en tu dispositivo móvil
 
 ---
 
-## Time Constraint
+### Instalación
 
-You have up to 72 business hours to complete the assignment. We want to see your work, but we also don’t want to take up a ton of your time.  Use judgement on what will help showcase your skills appropriately. 
+Clona el repositorio:
 
-If you run out of time, it is okay to not implement all of the requested features in the challenge
+   ```bash
+   git clone https://github.com/Julietabogado/hub-interview-mobile-react-native-01.git
+   ```
 
----
+### Instalar dependencias
 
-## Evaluation Criteria
-
-- Proper usage of the chosen framework/language (e.g., Swift, Kotlin, React Native)
-- Clean and modular code structure
-- Implementation of required features and flows (list, detail, favorites, etc.)
-- Clear and intuitive navigation between views
-- Good user experience and UI styling
-- Proper handling of state and data flow (local state management, API fetching, etc.)
-- Appropriate use of device capabilities.
-- Appropriate use of GIT conventional commits (https://conventional-branch.github.io/)
-- Readability and maintainability of the codebase
-- Documentation and clarity in the README
-
----
-
-## How to Submit
-
-Please make your code public and send a link to the github repository.
-
-Include a readme that outlines the process for running the app.
+```bash
+yarn install
+```
+Inicia el proyecto con Expo:
+npx expo
