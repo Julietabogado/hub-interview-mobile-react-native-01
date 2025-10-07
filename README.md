@@ -1,34 +1,35 @@
 # Coding Challenge - Mobile Development
 
-## 🍲 The Recipes Managed App
+## The Recipes Managed App
 
-Aplicación móvil construida con [Expo](https://expo.dev/) para gestionar recetas.
+A mobile application built with [Expo](https://expo.dev/) to manage recipes.
 
 ---
 
-### Requisitos Previos
+### Prerequisites
 
-Antes de comenzar, asegúrate de tener instalado:
+Before getting started, make sure you have the following installed:
 
-- [Node.js](https://nodejs.org/) (recomendado: versión LTS)
+- [Node.js](https://nodejs.org/) (recommended: LTS version)
 - [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
-- [Expo CLI](https://docs.expo.dev/get-started/installation/) (instalación local usando `npx` o global con `npm install -g expo-cli`)
-- Un emulador Android/iOS o la app [Expo Go](https://expo.dev/client) en tu dispositivo móvil
+- [Expo CLI](https://docs.expo.dev/get-started/installation/)  
+  (can be used locally with `npx` or installed globally via `npm install -g expo-cli`)
+- An Android/iOS emulator or the [Expo Go](https://expo.dev/client) app on your mobile device
 
 ---
 
-### Instalación
+### Installation
 
-Clona el repositorio:
+Clone the repository:
 
-   ```bash
-   git clone https://github.com/Julietabogado/hub-interview-mobile-react-native-01.git
-   ```
-
-### Instalar dependencias
+```bash
+git clone https://github.com/Julietabogado/hub-interview-mobile-react-native-01.git
+cd hub-interview-mobile-react-native-01
+```
+### Dependency Installation
 
 ```bash
 yarn install
 ```
-Inicia el proyecto con Expo:
+Start the project with Expo:
 npx expo
