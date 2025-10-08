@@ -1,26 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
-
-
-import { Recipe } from "@/types/recipe.js";
-import { recipesAPI } from "../../services/recipesAPI";
-
 import NoResultsFound from "@/components/NoResultsFound";
+import { Recipe } from "@/types/recipe.js";
+import React, { useEffect, useRef, useState } from "react";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { homeStyles } from "../../assets/styles/home.styles.js";
 import Loader from "../../components/Loader.jsx";
 import RecipeCard from "../../components/RecipeCard";
+import { recipesAPI } from "../../services/recipesAPI";
 
 export default function Index() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [skip, setSkip] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const LIMIT = 10;
+  const isMounted = useRef(false); // Track if component is mounted
 
   const loadData = async (refresh = false) => {
-    if (loading) return;
+    if (loading || (!refresh && !hasMore)) return;
 
     try {
       setLoading(true);
@@ -46,15 +43,19 @@ export default function Index() {
   const handleEasyRecipesButton = () => {};
 
   useEffect(() => {
+    isMounted.current = true;
     loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      isMounted.current = false;
+    };
   }, []);
 
-  if (loading && !refreshing)
+  if (loading && !refreshing && recipes.length === 0) {
     return <Loader message="Loading yummy recipes..." />;
+  }
 
   return (
-    <View style={homeStyles.container}>
+    <View style={[homeStyles.container, { minHeight: "100%" }]}>
       <View style={homeStyles.recipesSection}>
         <View style={homeStyles.sectionHeader}>
           <TouchableOpacity
@@ -75,8 +76,7 @@ export default function Index() {
         <FlatList
           data={recipes}
           renderItem={({ item }) => <RecipeCard recipe={item} />}
-          //modificar item.id unicamente
-          keyExtractor={(item, index) => `${item.id}-${index}`}
+          keyExtractor={(item) => item.id.toString()}
           numColumns={2}
           columnWrapperStyle={homeStyles.recipesGrid}
           scrollEnabled={true}
@@ -88,14 +88,16 @@ export default function Index() {
             />
           }
           onEndReached={() => {
-            if (hasMore && !loading) loadData();
+            if (hasMore && !loading && recipes.length >= LIMIT) {
+              loadData();
+            }
           }}
+          onEndReachedThreshold={0.1} 
           showsVerticalScrollIndicator={false}
-          onEndReachedThreshold={0.5}
           refreshing={refreshing}
           onRefresh={async () => {
             setRefreshing(true);
-            await loadData(true); // refresh first page
+            await loadData(true);
             setRefreshing(false);
           }}
         />
