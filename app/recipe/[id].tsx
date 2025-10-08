@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import Loader from "@/components/Loader";
 import { COLORS } from "@/constants/colors";
 import { recipesAPI } from "@/services/recipesAPI";
 import { Recipe } from "@/types/recipe";
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 import { recipeDetailStyles } from "../../assets/styles/recipe.styles";
+
+const FAVORITES_KEY = "@favorites_recipes";
 
 export default function RecipeDetailScreen() {
   const { id: recipeId } = useLocalSearchParams();
@@ -26,10 +27,41 @@ export default function RecipeDetailScreen() {
       setLoading(true);
       const response = await recipesAPI.searchRecipesById(recipeId);
       setRecipe(response);
+
+      // Load favorite status
+      const storedFavorites = await AsyncStorage.getItem(FAVORITES_KEY);
+      const favorites = storedFavorites ? JSON.parse(storedFavorites) : [];
+      setIsSaved(favorites.includes(String(recipeId)));
     } catch (error) {
-      console.log("Error loading the recipe details", error);
+      console.log("Error loading the recipe details or favorites:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleSave = async () => {
+    if (isSaving) return;
+
+    try {
+      setIsSaving(true);
+      const storedFavorites = await AsyncStorage.getItem(FAVORITES_KEY);
+      let favorites = storedFavorites ? JSON.parse(storedFavorites) : [];
+
+      if (isSaved) {
+        // Remove from favorites
+        favorites = favorites.filter((id: string) => id !== String(recipeId));
+        setIsSaved(false);
+      } else {
+        // Add to favorites
+        favorites.push(String(recipeId));
+        setIsSaved(true);
+      }
+
+      await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+    } catch (error) {
+      console.log("Error toggling favorite:", error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -38,17 +70,20 @@ export default function RecipeDetailScreen() {
     try {
       const response = await recipesAPI.deleteRecipebyId(recipeId);
       if (response.isDeleted === true) {
+        // Remove from favorites
+        const storedFavorites = await AsyncStorage.getItem(FAVORITES_KEY);
+        let favorites = storedFavorites ? JSON.parse(storedFavorites) : [];
+        favorites = favorites.filter((id: string) => id !== String(recipeId));
+        await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
         router.back();
       }
     } catch (error) {
-      console.log("Error deleting recipe", error);
+      console.log("Error deleting recipe:", error);
     } finally {
       setLoading(false);
     }
   };
-  const handleToggleSave =async()=>{
 
-  }
   useEffect(() => {
     loadData();
   }, [recipeId]);
@@ -91,11 +126,7 @@ export default function RecipeDetailScreen() {
             >
               <Ionicons
                 name={
-                  isSaving
-                    ? "hourglass"
-                    : isSaved
-                    ? "bookmark"
-                    : "bookmark-outline"
+                  isSaving ? "hourglass" : isSaved ? "heart" : "heart-outline"
                 }
                 size={24}
                 color={COLORS.white}
@@ -119,11 +150,19 @@ export default function RecipeDetailScreen() {
                 </Text>
               </View>
             )}
+            {recipe?.difficulty && (
+              <View style={recipeDetailStyles.locationRow}>
+                <Ionicons name="checkmark-circle" size={16} color={COLORS.white} />
+                <Text style={recipeDetailStyles.locationText}>
+                  {recipe?.difficulty}
+                </Text>
+              </View>
+            )}
           </View>
         </View>
 
         <View style={recipeDetailStyles.contentSection}>
-          {/* QUICK STATS */}
+          {/*  STATS, COOKTIME AND SERVINGS */}
           <View style={recipeDetailStyles.statsContainer}>
             <View style={recipeDetailStyles.statCard}>
               <Text style={recipeDetailStyles.statValue}>
@@ -140,7 +179,7 @@ export default function RecipeDetailScreen() {
             </View>
           </View>
 
-          {/* INGREDIENTS SECTION */}
+          {/* INGREDIENTS  */}
           <View style={recipeDetailStyles.sectionContainer}>
             <View style={recipeDetailStyles.sectionTitleRow}>
               <LinearGradient
@@ -173,7 +212,7 @@ export default function RecipeDetailScreen() {
             </View>
           </View>
 
-          {/* INSTRUCTIONS SECTION */}
+          {/* INSTRUCTIONS  */}
           <View style={recipeDetailStyles.sectionContainer}>
             <View style={recipeDetailStyles.sectionTitleRow}>
               <LinearGradient
@@ -225,7 +264,11 @@ export default function RecipeDetailScreen() {
               colors={[COLORS.primary, COLORS.primary + "CC"]}
               style={recipeDetailStyles.buttonGradient}
             >
-              <Ionicons name="heart" size={20} color={COLORS.white} />
+              <Ionicons
+                name={isSaved ? "heart" : "heart-outline"}
+                size={20}
+                color={COLORS.white}
+              />
               <Text style={recipeDetailStyles.buttonText}>
                 {isSaved ? "Remove from Favorites" : "Add to Favorites"}
               </Text>
@@ -236,10 +279,7 @@ export default function RecipeDetailScreen() {
             onPress={handleDelete}
             disabled={isSaving}
           >
-            <View
-              // colors={COLORS.primary}
-              style={recipeDetailStyles.buttonGradient}
-            >
+            <View style={recipeDetailStyles.buttonGradient}>
               <Ionicons name="trash-bin" size={20} color={COLORS.text} />
               <Text
                 style={[
