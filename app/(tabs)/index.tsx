@@ -1,7 +1,7 @@
 import NoResultsFound from "@/components/NoResultsFound";
 import { Recipe } from "@/types/recipe.js";
 import React, { useEffect, useRef, useState } from "react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, View } from "react-native";
 import { homeStyles } from "../../assets/styles/home.styles.js";
 import Loader from "../../components/Loader.jsx";
 import RecipeCard from "../../components/RecipeCard";
@@ -40,8 +40,6 @@ export default function Index() {
     }
   };
 
-  const handleEasyRecipesButton = () => {};
-
   useEffect(() => {
     isMounted.current = true;
     loadData();
@@ -57,22 +55,7 @@ export default function Index() {
   return (
     <View style={[homeStyles.container, { minHeight: "100%" }]}>
       <View style={homeStyles.recipesSection}>
-        <View style={homeStyles.sectionHeader}>
-          <TouchableOpacity
-            onPress={handleEasyRecipesButton}
-            style={homeStyles.selectButtonContainer}
-          >
-            <Text style={homeStyles.sectionTitle} numberOfLines={2}>
-              All
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={homeStyles.selectButtonContainer}>
-            <Text style={homeStyles.sectionTitle}>Easy</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={homeStyles.selectButtonContainer}>
-            <Text style={homeStyles.sectionTitle}>Medium</Text>
-          </TouchableOpacity>
-        </View>
+        <View style={homeStyles.sectionHeader}></View>
         <FlatList
           data={recipes}
           renderItem={({ item }) => <RecipeCard recipe={item} />}
@@ -92,7 +75,7 @@ export default function Index() {
               loadData();
             }
           }}
-          onEndReachedThreshold={0.1} 
+          onEndReachedThreshold={0.1}
           showsVerticalScrollIndicator={false}
           refreshing={refreshing}
           onRefresh={async () => {

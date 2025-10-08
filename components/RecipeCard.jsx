@@ -26,10 +26,7 @@ export default function RecipeCard({ recipe }) {
         <Text style={recipeCardStyles.description} numberOfLines={2}>
           {recipe.name}
         </Text>
-        <Text style={recipeCardStyles.description} numberOfLines={2}>
-          {recipe.difficulty}
-        </Text>
-        {recipe.description && (
+        {recipe.difficulty && (
           <Text style={recipeCardStyles.description} numberOfLines={2}>
             {recipe.difficulty}
           </Text>
